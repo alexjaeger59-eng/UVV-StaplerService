@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stapler Check</title>
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0056b3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Stapler Check">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Offline Service Worker aktiv:', reg.scope))
+            .catch(err => console.error('SW Fehler:', err));
+        });
+      }
+    </script>
+</head>
+<body>
+
+    <div class="header-data-grid">
+        <!-- Auftraggeber & Ausführungsort -->
+        <div class="input-group full-width">
+            <label for="info-auftraggeber">Auftraggeber (Name, Straße, PLZ/Ort):</label>
+            <textarea id="info-auftraggeber" rows="3" placeholder="Hellmann Gabelstapler-Service GmbH&#10;Werfer Straße 171&#10;32257 Bünde">Hellmann Gabelstapler-Service GmbH&#10;Werfer Straße 171&#10;32257 Bünde</textarea>
+        </div>
+        <div class="input-group full-width">
+            <label for="info-ort">Ausführungsort:</label>
+            <textarea id="info-ort" rows="3" placeholder="Hellmann Werkstatt&#10;32257 Bünde">Hellmann Werkstatt&#10;32257 Bünde</textarea>
+        </div>
+
+        <!-- Gerätedaten -->
+        <div class="input-group">
+            <label for="info-geraet">Hersteller / Typ:</label>
+            <input type="text" id="info-geraet" placeholder="Still EGV S16">
+        </div>
+        <div class="input-group">
+            <label for="info-seriennr">Serien-Nr. / Baujahr:</label>
+            <input type="text" id="info-seriennr" placeholder="710211007578">
+        </div>
+        <div class="input-group">
+            <label for="info-bs">Betriebsstunden:</label>
+            <input type="text" id="info-bs" placeholder="10084">
+        </div>
+        <div class="input-group">
+            <label for="info-intern">Interne Nr.:</label>
+            <input type="text" id="info-intern" placeholder="z. B. ST-01">
+        </div>
+        <div class="input-group">
+            <label for="info-pruefer">Prüfer Name:</label>
+            <input type="text" id="info-pruefer" placeholder="Müller">
+        </div>
+        <div class="input-group">
+            <label for="info-kundennr">Kundennummer (für Prüf-ID):</label>
+            <input type="text" id="info-kundennr" placeholder="60985">
+        </div>
+    </div>
+
+    <!-- Status / Ergebnis Auswahlen -->
+    <div class="status-selection-container">
+        <h3>Das Gerät ist aus sicherheitstechnischen Gründen:</h3>
+        <div class="radio-group">
+            <label><input type="radio" name="status_geraet" value="betriebsbereit" checked> Betriebsbereit</label>
+            <label><input type="radio" name="status_geraet" value="bedingt"> Bedingt betriebsbereit</label>
+            <label><input type="radio" name="status_geraet" value="stilllegen"> Sofort still zu legen</label>
+            <label><input type="radio" name="status_geraet" value="vorjahr"> Nicht behobene Mängel aus Vorjahr</label>
+        </div>
+
+        <h3>Mängelbeseitigung durch:</h3>
+        <div class="radio-group">
+            <label><input type="radio" name="status_maengel" value="sofort" checked> Sofortige Reparatur</label>
+            <label><input type="radio" name="status_maengel" value="auftrag"> Reparaturauftrag</label>
+            <label><input type="radio" name="status_maengel" value="angebot"> Angebot</label>
+        </div>
+
+        <h3>Prüfplakette:</h3>
+        <div class="radio-group">
+            <label><input type="radio" name="status_plakette" value="angebracht" checked> Prüfplakette angebracht</label>
+            <label><input type="radio" name="status_plakette" value="nicht_angebracht"> Prüfplakette nicht angebracht</label>
+        </div>
+    </div>
+
+    <div class="preset-selection" style="margin-top: 20px; margin-bottom: 20px;">
+        <label for="preset-select" style="font-weight: bold; font-size: 16px; display: block; margin-bottom: 8px;">Vorlage / Gerätetyp wählen:</label>
+        <select id="preset-select" onchange="wechselPreset(this.value)" style="padding: 10px; font-size: 16px; border-radius: 5px; width: 100%; max-width: 400px;">
+            <option value="stapler">Gabelstapler (Standard UVV)</option>
+            <option value="ameise">Ameise / Hubwagen</option>
+        </select>
+    </div>
+
+    <h1>Checkliste / Prüfpunkte</h1>
+
+    <div id="checklisten-container"></div>
+
+    <div class="signatures-wrapper">
+        <div class="signature-container">
+            <p><strong>Unterschrift des Prüfers:</strong></p>
+            <canvas id="signature-pad-pruefer" width="350" height="150"></canvas>
+            <br><button onclick="clearSignature('pruefer')">Löschen</button>
+        </div>
+        <div class="signature-container">
+            <p><strong>Unterschrift des Kunden:</strong></p>
+            <canvas id="signature-pad-kunde" width="350" height="150"></canvas>
+            <br><button onclick="clearSignature('kunde')">Löschen</button>
+        </div>
+    </div>
+
+    <br><br>
+    <button onclick="generierePDF()" style="background-color: #0056b3; color: white; width: 100%; padding: 20px; font-size: 20px; border-radius: 8px;">PDF generieren</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
