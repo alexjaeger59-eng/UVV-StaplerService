@@ -44,6 +44,13 @@
             <textarea id="info-ort" rows="3" placeholder="Hellmann Werkstatt&#10;32257 Bünde">Hellmann Werkstatt&#10;32257 Bünde</textarea>
         </div>
 
+        <div class="full-width" style="display: flex; justify-content: flex-end; margin-top: 5px; margin-bottom: 10px;">
+            <button type="button" class="btn-clear-address" onclick="leereAdressdaten()">
+            <span style="font-size: 16px;"></span> Adressdaten leeren
+            </button>
+        </div>
+
+
         <!-- Gerätedaten -->
         <div class="input-group">
             <label for="info-geraet">Hersteller / Typ:</label>
@@ -69,7 +76,18 @@
             <label for="info-kundennr">Kundennummer (für Prüf-ID):</label>
             <input type="text" id="info-kundennr" placeholder="60985">
         </div>
+    
+         <div class="full-width" style="display: flex; justify-content: flex-end; margin-top: 5px; margin-bottom: 10px;">
+            <button type="button" class="btn-clear-address" onclick="leerePruefdaten()">
+            <span style="font-size: 16px;"></span> Prüfdaten leeren
+            </button>
+        </div>
+    
+    
     </div>
+
+    
+
 
     <!-- Status / Ergebnis Auswahlen -->
     <div class="status-selection-container">
