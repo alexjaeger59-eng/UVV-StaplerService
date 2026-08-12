@@ -240,10 +240,6 @@ function generierePDF() {
         doc.addImage(LOGO_BASE64, 'PNG', 170, 8, 25, 15);
     }
 
-
-
-
-
     const auftraggeber = document.getElementById('info-auftraggeber').value.split('\n');
     const ort = document.getElementById('info-ort').value.split('\n');
     const geraet = document.getElementById('info-geraet').value || '';
@@ -255,6 +251,7 @@ function generierePDF() {
     const heuteDatum = new Date().toLocaleDateString('de-DE');
 
     const statusGeraet = document.querySelector('input[name="status_geraet"]:checked')?.value;
+    const hatAltMaengel = document.getElementById("alt_maengel_vorjahr")?.checked;
     const statusMaengel = document.querySelector('input[name="status_maengel"]:checked')?.value;
     const statusPlakette = document.querySelector('input[name="status_plakette"]:checked')?.value;
 
@@ -328,7 +325,10 @@ function generierePDF() {
     drawCheckbox(14, checkY, "Betriebsbereit", statusGeraet === "betriebsbereit");
     drawCheckbox(55, checkY, "bedingt Betriebsbereit", statusGeraet === "bedingt");
     drawCheckbox(105, checkY, "sofort still zu legen", statusGeraet === "stilllegen");
-    drawCheckbox(148, checkY, "Nicht behobene Mängel aus Vorjahr", statusGeraet === "vorjahr");
+    //drawCheckbox(148, checkY, "Nicht behobene Mängel aus Vorjahr", statusGeraet === "vorjahr");
+
+    drawCheckbox(148, checkY, "Nicht behobene Mängel aus Vorjahr", hatAltMaengel);
+
 
     // 7. Mängelbeseitigung
     checkY += 12;
@@ -395,6 +395,9 @@ function generierePDF() {
         finalY = 20;
     }
 
+    const namePruefer = document.getElementById("name-pruefer")?.value || "";
+    const nameKunde = document.getElementById("name-kunde")?.value || "";
+
     doc.setFontSize(9);
     if (!padPruefer.isEmpty()) {
         doc.text("Unterschrift Prüfer:", 14, finalY);
@@ -403,11 +406,23 @@ function generierePDF() {
         doc.text("Unterschrift Prüfer: _____________________", 14, finalY);
     }
 
+    if (namePruefer) {
+        doc.setFont("helvetica", "italic");
+        doc.text(`${namePruefer}`, 14, finalY + 18);
+        doc.setFont("helvetica", "normal");
+    }
+
     if (!padKunde.isEmpty()) {
         doc.text("Unterschrift Kunde:", 110, finalY);
         doc.addImage(padKunde.toDataURL(), 'PNG', 110, finalY + 2, 40, 12);
     } else {
         doc.text("Unterschrift Kunde: _____________________", 110, finalY);
+    }
+
+    if (nameKunde) {
+        doc.setFont("helvetica", "italic");
+        doc.text(`${nameKunde}`, 110, finalY + 18);
+        doc.setFont("helvetica", "normal");
     }
 
     // -----------------------------------------------------------

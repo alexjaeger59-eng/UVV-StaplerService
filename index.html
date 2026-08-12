@@ -96,8 +96,16 @@
             <label><input type="radio" name="status_geraet" value="betriebsbereit" checked> Betriebsbereit</label>
             <label><input type="radio" name="status_geraet" value="bedingt"> Bedingt betriebsbereit</label>
             <label><input type="radio" name="status_geraet" value="stilllegen"> Sofort still zu legen</label>
-            <label><input type="radio" name="status_geraet" value="vorjahr"> Nicht behobene Mängel aus Vorjahr</label>
         </div>
+
+        <div style="margin-top: 10px;">
+        <label style="font-weight: bold;">
+            <input type="checkbox" id="alt_maengel_vorjahr" name="alt_maengel_vorjahr" value="ja"> 
+            Nicht behobene Mängel aus Vorjahr vorhanden
+        </label>
+    </div>
+
+
 
         <h3>Mängelbeseitigung durch:</h3>
         <div class="radio-group">
@@ -129,14 +137,20 @@
         <div class="signature-container">
             <p><strong>Unterschrift des Prüfers:</strong></p>
             <canvas id="signature-pad-pruefer" width="350" height="150"></canvas>
+            <input type="text" id="name-pruefer" placeholder="z.B. Max Mustermann" class="form-input">
             <br><button onclick="clearSignature('pruefer')">Löschen</button>
         </div>
         <div class="signature-container">
             <p><strong>Unterschrift des Kunden:</strong></p>
             <canvas id="signature-pad-kunde" width="350" height="150"></canvas>
+            <input type="text" id="name-kunde" placeholder="z.B. Erika Musterfrau" class="form-input">
             <br><button onclick="clearSignature('kunde')">Löschen</button>
         </div>
     </div>
+
+
+
+
 
     <br><br>
     <button onclick="generierePDF()" style="background-color: #0056b3; color: white; width: 100%; padding: 20px; font-size: 20px; border-radius: 8px;">PDF generieren</button>
