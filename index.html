@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stapler Check</title>
+    <title>Hellmann UVV-APP</title>
     
     <!-- PWA & Mobile Meta Tags -->
     <link rel="manifest" href="manifest.webmanifest">
@@ -32,6 +32,11 @@
     </script>
 </head>
 <body>
+    <div class="version-badge">
+    v1.0.4
+    </div>
+
+
 
     <div class="header-data-grid">
         <!-- Auftraggeber & Ausführungsort -->
@@ -50,8 +55,20 @@
             </button>
         </div>
 
+        <!-- Prüfunsid -->
 
+        <div class="input-group">
+            <label for="info-monteur">Monteursnummer:</label>
+            <input type="text" id="info-monteur" placeholder="2">
+        </div>
+
+    
         <!-- Gerätedaten -->
+
+        <div class="input-group">
+            <label for="info-pruefer">Prüfer Name:</label>
+            <input type="text" id="info-pruefer" placeholder="Müller">
+        </div>
         <div class="input-group">
             <label for="info-geraet">Hersteller / Typ:</label>
             <input type="text" id="info-geraet" placeholder="Still EGV S16">
@@ -68,16 +85,7 @@
             <label for="info-intern">Interne Nr.:</label>
             <input type="text" id="info-intern" placeholder="z. B. ST-01">
         </div>
-        <div class="input-group">
-            <label for="info-pruefer">Prüfer Name:</label>
-            <input type="text" id="info-pruefer" placeholder="Müller">
-        </div>
-        <div class="input-group">
-            <label for="info-kundennr">Kundennummer (für Prüf-ID):</label>
-            <input type="text" id="info-kundennr" placeholder="60985">
-        </div>
-    
-         <div class="full-width" style="display: flex; justify-content: flex-end; margin-top: 5px; margin-bottom: 10px;">
+        <div class="full-width" style="display: flex; justify-content: flex-end; margin-top: 5px; margin-bottom: 10px;">
             <button type="button" class="btn-clear-address" onclick="leerePruefdaten()">
             <span style="font-size: 16px;"></span> Prüfdaten leeren
             </button>
@@ -119,6 +127,13 @@
             <label><input type="radio" name="status_plakette" value="angebracht" checked> Prüfplakette angebracht</label>
             <label><input type="radio" name="status_plakette" value="nicht_angebracht"> Prüfplakette nicht angebracht</label>
         </div>
+
+        <h3>Nächster Prüftermin</h3>
+        <div class="form-group">
+            <label for="naechsterPrueftermin">Nächster Prüftermin:</label>
+             <input type="date" id="naechsterPrueftermin" name="naechsterPrueftermin">
+        </div>
+
     </div>
 
     <div class="preset-selection" style="margin-top: 20px; margin-bottom: 20px;">
@@ -147,9 +162,6 @@
             <br><button onclick="clearSignature('kunde')">Löschen</button>
         </div>
     </div>
-
-
-
 
 
     <br><br>

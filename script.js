@@ -15,7 +15,6 @@ function leerePruefdaten() {
 }
 
 
-
 const MessTyp = {
     IO_NIO: "io_nio",
     BEWERTUNG: "bewertung",
@@ -124,15 +123,35 @@ function getFormatiertesDatum() {
     return `${tag}${monat}${jahr}`;
 }
 
+/*
 function holePruefID() {
-    const kundenNr = document.getElementById('info-kundennr').value.trim() || '000';
+    const monteurNr = document.getElementById('info-monteur').value.trim() || '000';
     const datum = getFormatiertesDatum();
     const speicherKey = `uvv_zaehler_${datum}`;
     let zaehler = parseInt(localStorage.getItem(speicherKey) || "0", 10) + 1;
     localStorage.setItem(speicherKey, zaehler);
     const zaehlerFormatiert = String(zaehler).padStart(2, '0');
-    return `${kundenNr}-${datum}-${zaehlerFormatiert}`;
+    return `${monteurNr}-${zaehlerFormatiert}-${datum}`;
 }
+*/
+function holePruefID() {
+    const monteurNr = document.getElementById('info-monteur').value.trim() || '000';
+    const datum = getFormatiertesDatum();
+    
+    // Fester Key ohne Datum -> zählt global immer weiter
+    const speicherKey = 'uvv_zaehler_global';
+    
+    let zaehler = parseInt(localStorage.getItem(speicherKey) || "0", 10) + 1;
+    localStorage.setItem(speicherKey, zaehler);
+    
+    // Zähler zweistellig formatieren (z. B. 01, 02, ... 99)
+    // Tipp: Falls du mehr als 99 Berichte machst, passe '2' auf '3' an für (001, 002...)
+    const zaehlerFormatiert = String(zaehler).padStart(2, '0');
+    
+    return `${monteurNr}-${zaehlerFormatiert}-${datum}`;
+}
+
+
 
 function findePruefpunkt(id) {
     for (const kat of aktuelleDaten) {
@@ -254,6 +273,10 @@ function generierePDF() {
     const hatAltMaengel = document.getElementById("alt_maengel_vorjahr")?.checked;
     const statusMaengel = document.querySelector('input[name="status_maengel"]:checked')?.value;
     const statusPlakette = document.querySelector('input[name="status_plakette"]:checked')?.value;
+
+    //Date
+    const terminInput = document.getElementById('naechsterPrueftermin')?.value || '';
+
 
     doc.setFont("helvetica", "normal");
 
@@ -387,13 +410,50 @@ function generierePDF() {
         styles: { fontSize: 8, cellPadding: 1.5, overflow: 'linebreak' }
     });
 
+//-------------------------
 
-    // 10. Unterschriften im PDF
-    let finalY = doc.lastAutoTable.finalY + 15;
+// 9.5. Kasten für Nächsten Prüftermin (unter der Tabelle)
+    
+    let NaechsterTermin = '';
+
+    if (terminInput) {
+        const [jahr, monat, tag] = terminInput.split('-');
+        NaechsterTermin = `${tag}.${monat}.${jahr}`;
+    }
+
+
+    let terminY = doc.lastAutoTable.finalY + 5;
+    
+    // Prüfen, ob für den Kasten noch Platz auf der Seite ist, sonst neue Seite
+    if (terminY > 240) {
+        doc.addPage();
+        terminY = 20;
+    }
+
+    // Kasten zeichnen (X: 14, Y: terminY, Breite: 70, Höhe: 12)
+    doc.rect(14, terminY, 70, 12);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.text("Nächster Prüftermin:", 16, terminY + 4);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(NaechsterTermin, 16, terminY + 9);
+
+    let finalY = terminY + 18;
     if (finalY > 250) {
         doc.addPage();
         finalY = 20;
     }
+
+//---------------------------
+
+
+    // 10. Unterschriften im PDF
+    //let finalY = doc.lastAutoTable.finalY + 15;
+    //if (finalY > 250) {
+        //doc.addPage();
+        //finalY = 20;
+    //}
 
     const namePruefer = document.getElementById("name-pruefer")?.value || "";
     const nameKunde = document.getElementById("name-kunde")?.value || "";
