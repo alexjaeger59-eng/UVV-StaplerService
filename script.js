@@ -115,6 +115,7 @@ const presets = {
 
 let aktuelleDaten = presets.stapler;
 
+/*
 function getFormatiertesDatum() {
     const d = new Date();
     const tag = String(d.getDate()).padStart(2, '0');
@@ -122,6 +123,7 @@ function getFormatiertesDatum() {
     const jahr = String(d.getFullYear()).slice(-2);
     return `${tag}${monat}${jahr}`;
 }
+*/
 
 /*
 function holePruefID() {
@@ -134,6 +136,26 @@ function holePruefID() {
     return `${monteurNr}-${zaehlerFormatiert}-${datum}`;
 }
 */
+function getFormatiertesDatum() {
+    const datumInput = document.getElementById('pruefdatum')?.value;
+    
+    let zielDatum;
+    
+    if (datumInput) {
+        // Nutzt das manuell gewählte Datum aus dem Input-Feld
+        zielDatum = new Date(datumInput);
+    } else {
+        // Falls leer: Nutzt das aktuelle Datum
+        zielDatum = new Date();
+    }
+
+    const jahr = zielDatum.getFullYear();
+    const monat = String(zielDatum.getMonth() + 1).padStart(2, '0');
+    const tag = String(zielDatum.getDate()).padStart(2, '0');
+
+    return `${tag}${monat}${jahr}`;
+}
+
 function holePruefID() {
     const monteurNr = document.getElementById('info-monteur').value.trim() || '000';
     const datum = getFormatiertesDatum();
