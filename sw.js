@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uvv-app-v1.0.4';
+const CACHE_NAME = 'uvv-app-v1.0.6';
 
 // Lokale Kern-Assets
 const STATIC_ASSETS = [

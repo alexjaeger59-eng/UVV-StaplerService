@@ -181,3 +181,33 @@ canvas {
         flex-direction: column;
     }
 }
+
+/* Datumsfeld an die übrigen Formularfelder angepasst */
+input[type="date"] {
+  width: 100%;
+  font-size: 16px; /* Verhindert Zoom auf iOS */
+  padding: 10px; /* Passt zu deinen anderen Input-Feldern */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+  font-family: inherit;
+  color: #333;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Kalender-Icon dezent vergrößert für leichte Bedienung */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+/* Visuelles Feedback beim Antippen */
+input[type="date"]:focus {
+  outline: none;
+  border-color: #34495e;
+}

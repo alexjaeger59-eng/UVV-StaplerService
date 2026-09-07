@@ -69,7 +69,6 @@ const presets = {
             punkte: [
                 { id: "5_6", label: "Fahrzeugrahmen/Sicherheitsausrüstung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
                 { id: "5_6_1", label: "Befestigungspunkte", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
-                { id: "5_6_2", label: "Fahrzeugrahmen/Sicherheitsausrüstung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
                 { id: "5_6_3", label: "Anhängerkupplung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
                 { id: "5_6_4", label: "Bodenöffnung an Treibgaßstaplern", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
                 { id: "5_6_5", label: "Haubenverriegelung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
@@ -107,7 +106,10 @@ const presets = {
             punkte: [
                 { id: "A_3_1", label: "Batterienstecker & Kabelbeschädigung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
                 { id: "A_3_2", label: "Not-Aus-Schalter Funktion", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
-                { id: "A_3_3", label: "Schlüsselschalter / Display", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" }
+                { id: "A_3_3", label: "Schlüsselschalter / Display", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
+                { id: "A_3_4", label: "Batterie Zustand", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" },
+                { id: "A_3_4", label: "Batterie Daten und Befestigung", typ: MessTyp.IO_NIO, zustand: "", kommentar: "" }
+                
             ]
         }
     ]
@@ -249,6 +251,7 @@ function speichereKommentar(id, text) {
     if (punkt) punkt.kommentar = text;
 }
 
+/*
 function waehleZustand(button, wert, id) {
     const punkt = findePruefpunkt(id);
     if (punkt) {
@@ -260,6 +263,28 @@ function waehleZustand(button, wert, id) {
     alleButtonsInDieserGruppe.forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
 }
+*/
+
+function waehleZustand(button, wert, id) {
+    const punkt = findePruefpunkt(id);
+    if (!punkt) return;
+
+    // Wenn derselbe Wert erneut angeklickt wird -> Abwählen
+    if (punkt.zustand === wert) {
+        punkt.zustand = "";
+        button.classList.remove('active');
+    } else {
+        // Andernfalls neuen Wert setzen
+        punkt.zustand = wert;
+        const elternElement = button.parentElement;
+        const alleButtonsInDieserGruppe = elternElement.querySelectorAll('.btn-check');
+        alleButtonsInDieserGruppe.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+    }
+}
+
+
+
 
 // Initialisierung der Signature Pads
 let canvasPruefer = document.getElementById('signature-pad-pruefer');
@@ -376,15 +401,17 @@ function generierePDF() {
 
 
     // 7. Mängelbeseitigung
+    // 7. Mängelbeseitigung
     checkY += 12;
     doc.setFont("helvetica", "bold");
     doc.text("Mängelbeseitigung durch:", 14, checkY);
     doc.setFont("helvetica", "normal");
 
     checkY += 6;
-    drawCheckbox(14, checkY, "sofortige Reparatur", statusMaengel === "sofort");
-    drawCheckbox(55, checkY, "Reparaturauftrag", statusMaengel === "auftrag");
-    drawCheckbox(105, checkY, "Angebot", statusMaengel === "angebot");
+    drawCheckbox(14, checkY, "Keine Mängel", statusMaengel === "keine");
+    drawCheckbox(55, checkY, "sofortige Reparatur", statusMaengel === "sofort");
+    drawCheckbox(105, checkY, "Reparaturauftrag", statusMaengel === "auftrag");
+    drawCheckbox(148, checkY, "Angebot", statusMaengel === "angebot");
 
     // 8. Prüfplakette
     checkY += 12;
