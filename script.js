@@ -299,6 +299,11 @@ function clearSignature(wer) {
 }
 
 function generierePDF() {
+
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+
     const doc = new jspdf.jsPDF();
     
 // Logo oben rechts auf das PDF zeichnen
@@ -566,6 +571,11 @@ function generierePDF() {
     }
 
     doc.save(`UVV_Bericht_${geraet.replace(/\s+/g, '_') || 'Geraet'}.pdf`);
+
+    setTimeout(() => {
+        window.focus();
+    }, 100);
+
 }
 
 // App initialisieren
